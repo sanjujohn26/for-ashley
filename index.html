@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For Ashley</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://w.soundcloud.com/player/api.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -84,6 +85,12 @@
 </head>
 <body>
 
+    <iframe id="sc-player" 
+            style="display:none" 
+            src="https://w.soundcloud.com/player/?url=https://soundcloud.com/palden-choden/desi-girl-dostana-720p-hd-song&auto_play=false" 
+            allow="autoplay">
+    </iframe>
+
     <div id="container">
         <h1 id="questionText">Please confirm if this is Ashley</h1>
         <span id="footnote" class="footnote hidden"></span>
@@ -145,11 +152,13 @@
         let failCount = 0;
         let scalePos = 1;
         let scaleNeg = 1;
+        let musicStarted = false;
 
         const questionText = document.getElementById('questionText');
         const footnote = document.getElementById('footnote');
         const primaryBtn = document.getElementById('primaryBtn');
         const secondaryBtn = document.getElementById('secondaryBtn');
+        const widget = SC.Widget(document.getElementById('sc-player'));
 
         function updateScreen() {
             const data = flow[currentStep];
@@ -198,6 +207,12 @@
         }
 
         function handlePositive() {
+            // Start the music on the first click!
+            if (!musicStarted) {
+                widget.play();
+                musicStarted = true;
+            }
+
             if (currentStep < flow.length - 1) {
                 currentStep++;
                 updateScreen();

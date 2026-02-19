@@ -92,11 +92,11 @@
     </iframe>
 
     <div id="container">
-        <h1 id="questionText">Please confirm if this is Ashley</h1>
+        <h1 id="questionText">Tap to start (with music 🎵)</h1>
         <span id="footnote" class="footnote hidden"></span>
         <div class="buttons" id="btnWrapper">
-            <button id="primaryBtn" onclick="handlePositive()">Yes</button>
-            <button id="secondaryBtn" onclick="handleNegative()">No</button>
+            <button id="primaryBtn" onclick="handlePositive()">Start ❤️</button>
+            <button id="secondaryBtn" class="hidden" onclick="handleNegative()">No</button>
         </div>
     </div>
 
@@ -148,7 +148,7 @@
             { q: "You passed! Every single one is a Fact. I love you! ❤️", pos: "The End", neg: "", celebrate: true }
         ];
 
-        let currentStep = 0;
+        let currentStep = -1; // Set to -1 to account for the new intro screen
         let failCount = 0;
         let scalePos = 1;
         let scaleNeg = 1;
@@ -158,71 +158,4 @@
         const footnote = document.getElementById('footnote');
         const primaryBtn = document.getElementById('primaryBtn');
         const secondaryBtn = document.getElementById('secondaryBtn');
-        const widget = SC.Widget(document.getElementById('sc-player'));
-
-        function updateScreen() {
-            const data = flow[currentStep];
-            questionText.innerHTML = data.q;
-            primaryBtn.innerText = data.pos;
-            secondaryBtn.innerText = data.neg;
-            
-            if (data.note) {
-                footnote.innerText = data.note;
-                footnote.classList.remove('hidden');
-            } else {
-                footnote.classList.add('hidden');
-            }
-
-            scalePos = 1; scaleNeg = 1; failCount = 0;
-            primaryBtn.style.transform = `scale(1)`;
-            secondaryBtn.style.transform = `scale(1)`;
-            secondaryBtn.classList.toggle('hidden', data.neg === "");
-
-            if (data.celebrate) {
-                launchCelebration();
-            }
-        }
-
-        function launchCelebration() {
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            for (let i = 0; i < 15; i++) {
-                setTimeout(() => {
-                    const b = document.createElement('div');
-                    b.className = 'balloon';
-                    b.style.left = Math.random() * 100 + "vw";
-                    b.style.backgroundColor = ['#ff4d6d', '#ff8fa3', '#c9184a'][Math.floor(Math.random() * 3)];
-                    document.body.appendChild(b);
-                    setTimeout(() => b.remove(), 6000);
-                }, i * 300);
-            }
-        }
-
-        function handleNegative() {
-            failCount++;
-            scalePos += 0.7;
-            scaleNeg -= 0.2;
-            primaryBtn.style.transform = `scale(${scalePos})`;
-            secondaryBtn.style.transform = `scale(${scaleNeg})`;
-            if (failCount >= 3) secondaryBtn.classList.add('hidden');
-        }
-
-        function handlePositive() {
-            // Start the music on the first click!
-            if (!musicStarted) {
-                widget.play();
-                musicStarted = true;
-            }
-
-            if (currentStep < flow.length - 1) {
-                currentStep++;
-                updateScreen();
-            } else {
-                questionText.innerHTML = "Forever & Always ❤️";
-                document.getElementById('btnWrapper').classList.add('hidden');
-                footnote.classList.add('hidden');
-                launchCelebration();
-            }
-        }
-    </script>
-</body>
-</html>
+        const widget = SC.Widget(document.getElementById('sc

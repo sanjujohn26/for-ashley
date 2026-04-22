@@ -60,7 +60,6 @@
             cursor: pointer;
             font-weight: bold;
             transition: transform 0.2s ease;
-            /* Touch-action helps prevent zooming on rapid taps on iOS */
             touch-action: manipulation; 
         }
 
@@ -83,12 +82,21 @@
         @keyframes float {
             to { transform: translateY(-120vh) translateX(50px); opacity: 0; }
         }
+
+        /* iOS Fix: Keeping the iframe "visible" but hidden from the user */
+        #sc-player {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+            left: -9999px;
+        }
     </style>
 </head>
 <body>
 
     <iframe id="sc-player" 
-            style="display:none" 
             src="https://w.soundcloud.com/player/?url=https://soundcloud.com/aditya-tanwar-714460659/ruth-b-dandelions-tiktok&auto_play=false" 
             allow="autoplay">
     </iframe>
@@ -164,14 +172,19 @@
         let scalePos = 1;
         let scaleNeg = 1;
         let musicStarted = false;
+        let widgetReady = false;
 
         const questionText = document.getElementById('questionText');
         const footnote = document.getElementById('footnote');
         const primaryBtn = document.getElementById('primaryBtn');
         const secondaryBtn = document.getElementById('secondaryBtn');
-        
-        // Initialize SoundCloud Widget
         const widget = SC.Widget(document.getElementById('sc-player'));
+
+        // Bind Ready Event
+        widget.bind(SC.Widget.Events.READY, function() {
+            widgetReady = true;
+            console.log("SoundCloud API Ready");
+        });
 
         function updateScreen() {
             const data = flow[currentStep];
@@ -220,8 +233,10 @@
         }
 
         function handlePositive() {
-            // Mobile Fix: Start the music on the very first user interaction
+            // Trigger music on the first tap
             if (!musicStarted) {
+                // We try to play even if "Ready" hasn't fired yet, 
+                // but the click event "unlocks" the audio channel for the session.
                 widget.setVolume(100);
                 widget.play();
                 musicStarted = true;
